@@ -25,6 +25,7 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import java.lang.reflect.Method
 import java.util.concurrent.Executor
@@ -224,8 +225,20 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
     override fun requestMTU(addressArgs: String, mtuArgs: Long, callback: (Result<Long>) -> Unit) {
         try {
             val gatt = mGATTs[addressArgs] ?: throw IllegalArgumentException()
-            val mtu = mtuArgs.toInt()
-            val requesting = gatt.requestMtu(mtu)
+            var mtu = mtuArgs.toInt()
+            var prio = -1;
+            if (mtu < 0) {
+                prio = -mtu - 1
+                mtu = 517
+            }
+            var requesting = true
+            if (requesting && prio >= 0) {
+                Log.d("NaviHack", "Setting priority and MTU")
+                requesting = gatt.requestConnectionPriority(prio)
+            }
+            if (requesting) {
+                requesting = gatt.requestMtu(mtu)
+            }
             if (!requesting) {
                 throw IllegalStateException()
             }

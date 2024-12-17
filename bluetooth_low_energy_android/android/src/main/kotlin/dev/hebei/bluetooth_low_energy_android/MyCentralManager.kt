@@ -226,7 +226,7 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
         try {
             val gatt = mGATTs[addressArgs] ?: throw IllegalArgumentException()
             val mtu = mtuArgs.toInt()
-            val prio = mtu < 0 ? -mtu - 1 : -1;
+            val prio = if (mtu < 0) -mtu - 1 else -1
             var requesting = true
             if (prio >= 0) {
                 Log.d("NaviHack", "Setting priority")

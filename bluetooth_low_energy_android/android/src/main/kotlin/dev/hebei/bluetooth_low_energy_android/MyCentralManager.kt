@@ -225,24 +225,19 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
     override fun requestMTU(addressArgs: String, mtuArgs: Long, callback: (Result<Long>) -> Unit) {
         try {
             val gatt = mGATTs[addressArgs] ?: throw IllegalArgumentException()
-            var mtu = mtuArgs.toInt()
-            var prio = -1;
-            if (mtu < 0) {
-                prio = -mtu - 1
-                mtu = 517
-            }
+            val mtu = mtuArgs.toInt()
+            val prio = mtu < 0 ? -mtu - 1 : -1;
             var requesting = true
-            if (requesting && prio >= 0) {
-                Log.d("NaviHack", "Setting priority and MTU")
+            if (prio >= 0) {
+                Log.d("NaviHack", "Setting priority")
                 requesting = gatt.requestConnectionPriority(prio)
-            }
-            if (requesting) {
+            } else {
                 requesting = gatt.requestMtu(mtu)
+                mRequestMtuCallbacks[addressArgs] = callback
             }
             if (!requesting) {
                 throw IllegalStateException()
             }
-            mRequestMtuCallbacks[addressArgs] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }

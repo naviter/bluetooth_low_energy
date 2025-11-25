@@ -242,13 +242,7 @@ class MyPeripheralManager(context: Context, binaryMessenger: BinaryMessenger) : 
         }
     }
 
-    override fun notifyCharacteristicChanged(
-        addressArgs: String,
-        hashCodeArgs: Long,
-        confirmArgs: Boolean,
-        valueArgs: ByteArray,
-        callback: (Result<Unit>) -> Unit
-    ) {
+    override fun notifyCharacteristicChanged(addressArgs: String, hashCodeArgs: Long, confirmArgs: Boolean, valueArgs: ByteArray, callback: (Result<Unit>) -> Unit) {
         try {
             val device = mDevices[addressArgs] ?: throw IllegalArgumentException()
             val characteristic = mCharacteristics[hashCodeArgs] ?: throw IllegalArgumentException()
@@ -256,12 +250,22 @@ class MyPeripheralManager(context: Context, binaryMessenger: BinaryMessenger) : 
                 val statusCode = server.notifyCharacteristicChanged(device, characteristic, confirmArgs, valueArgs)
                 statusCode == BluetoothStatusCodes.SUCCESS
             } else { // TODO: remove this when minSdkVersion >= 33
+                // Oudie/Omni executes this
                 characteristic.value = valueArgs
                 server.notifyCharacteristicChanged(device, characteristic, confirmArgs)
             }
             if (!notifying) {
                 throw IllegalStateException()
             }
+            
+            // fake OK result
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                // On Oudie/Omni callback is not called every time after one device goes out of range and reconnects
+                callback(Result.success(Unit))
+                return;
+            }
+            // end fake
+
             mNotifyCharacteristicValueChangedCallbacks[addressArgs] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))

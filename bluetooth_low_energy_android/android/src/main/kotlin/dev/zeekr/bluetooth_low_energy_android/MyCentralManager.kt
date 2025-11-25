@@ -239,7 +239,7 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
             val prio = if (mtu < 0) -mtu - 1 else -1
             var requesting = true
             if (prio >= 0) {
-                Log.d("NaviHack", "Setting priority")
+                // Log.d("NaviHack", "Setting priority")
                 requesting = gatt.requestConnectionPriority(prio)
             } else {
                 requesting = gatt.requestMtu(mtu)

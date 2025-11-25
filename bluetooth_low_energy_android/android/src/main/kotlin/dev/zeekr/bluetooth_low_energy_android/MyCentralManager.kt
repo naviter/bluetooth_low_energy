@@ -236,11 +236,21 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
         try {
             val gatt = mGATTs[addressArgs] ?: throw IllegalArgumentException()
             val mtu = mtuArgs.toInt()
-            val requesting = gatt.requestMtu(mtu)
+            val prio = if (mtu < 0) -mtu - 1 else -1
+            var requesting = true
+            if (prio >= 0) {
+                Log.d("NaviHack", "Setting priority")
+                requesting = gatt.requestConnectionPriority(prio)
+            } else {
+                requesting = gatt.requestMtu(mtu)
+                mRequestMtuCallbacks[addressArgs] = callback
+
+            }
+
+
             if (!requesting) {
                 throw IllegalStateException()
             }
-            mRequestMtuCallbacks[addressArgs] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }

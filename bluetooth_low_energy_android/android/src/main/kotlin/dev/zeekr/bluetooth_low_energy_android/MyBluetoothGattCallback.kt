@@ -57,7 +57,7 @@ class MyBluetoothGattCallback(manager: MyCentralManager, executor: Executor) : B
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return
         }
-        val value = characteristic.value
+        val value = characteristic.value ?: byteArrayOf()
         mExecutor.execute {
             mManager.onCharacteristicRead(gatt, characteristic, status, value)
         }

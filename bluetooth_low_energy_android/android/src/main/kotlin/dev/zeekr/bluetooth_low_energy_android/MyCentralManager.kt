@@ -241,6 +241,7 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
             if (prio >= 0) {
                 // Log.d("NaviHack", "Setting priority")
                 requesting = gatt.requestConnectionPriority(prio)
+                callback(Result.success(if (requesting) 0 else 1))
             } else {
                 requesting = gatt.requestMtu(mtu)
                 mRequestMtuCallbacks[addressArgs] = callback

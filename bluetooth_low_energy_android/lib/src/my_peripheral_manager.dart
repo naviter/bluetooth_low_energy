@@ -968,6 +968,9 @@ final class MyPeripheralManager extends PlatformPeripheralManager
     });
   }
 
+  @override
+  Future<void> refreshState() => _getState();
+
   Future<void> _getState() async {
     try {
       logger.info('getState');

@@ -402,6 +402,9 @@ final class MyCentralManager extends PlatformCentralManager
     });
   }
 
+  @override
+  Future<void> refreshState() => _getState();
+
   Future<void> _getState() async {
     try {
       logger.info('getState');

@@ -434,6 +434,15 @@ final class MyCentralManager extends PlatformCentralManager {
     }
   }
 
+  @override
+  Future<void> refreshState() async {
+    if (_blueZClient.adapters.isEmpty) {
+      state = BluetoothLowEnergyState.unsupported;
+    } else {
+      state = _blueZAdapter.myState;
+    }
+  }
+
   Future<void> _initialize() async {
     // Here we use `Future()` to make it possible to change the `logLevel` before `initialize()`.
     await Future(() async {

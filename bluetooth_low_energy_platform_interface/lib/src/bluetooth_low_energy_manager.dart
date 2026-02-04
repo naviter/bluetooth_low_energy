@@ -21,6 +21,9 @@ abstract interface class BluetoothLowEnergyManager implements LogController {
   /// Tells the manager's state updated.
   Stream<BluetoothLowEnergyStateChangedEventArgs> get stateChanged;
 
+  /// Refreshes the manager's state from the platform.
+  Future<void> refreshState();
+
   /// Requests permissions to be granted to this application. These permissions
   /// must be requested in your manifest, they should not be granted to your app,
   /// and they should have protection level dangerous, regardless whether they
